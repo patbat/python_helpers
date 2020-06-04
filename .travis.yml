@@ -1,0 +1,15 @@
+matrix:
+    include:
+        - language: python
+          python: 3.7
+          os: linux
+          dist: bionic
+          install:
+              - pip install scipy
+              - pip install .
+              - pip install pytest-cov
+              - pip install coveralls
+          script:
+              - pytest --cov=python_helpers python_helpers/tests/
+          after_sucess:
+              - coveralls
