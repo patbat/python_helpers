@@ -23,5 +23,10 @@ def test_construction():
     assert Three.three is Three.from_str('three')
 
 
+def test_disallowed_construction():
+    with pytest.raises(ValueError):
+        Three.from_str('four')
+
+
 def test_allowed_values():
     return Three.allowed_values == 'one, two, three'
