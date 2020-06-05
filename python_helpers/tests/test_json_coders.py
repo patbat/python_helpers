@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 import json
+import os
 from typing import List
 
 import numpy as np
@@ -29,6 +30,7 @@ def test_file_handling(tmp_path):
     instance = Dummy(lis=[1, 2, 3], s='string')
     instance.safe(file_path)
     instance2 = Dummy.load(file_path)
+    os.remove(file_path)
     assert instance == instance2
 
 
