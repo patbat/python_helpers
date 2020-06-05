@@ -12,7 +12,7 @@ from __future__ import annotations
 import abc
 import json
 import dataclasses
-import typing
+from typing import Any, Dict, Iterable, Union
 
 import numpy as np
 from scipy.optimize import OptimizeResult
@@ -31,17 +31,17 @@ class JsonSerializable(abc.ABC):
     @classmethod
     def load(cls, file_path: str) -> JsonSerializable:
         """Load an object from a json file."""
-        with open(file_path, "r") as input_file:
+        with open(file_path, 'r') as input_file:
             return cls.from_json(input_file.read())
 
     def safe(self, file_path: str) -> None:
         """Store an object as a json file."""
-        with open(file_path, "w") as output:
+        with open(file_path, 'w') as output:
             output.write(self.to_json())
 
 
 def combine_encoders(name: str,
-                     encoders: typing.Iterable[type]) -> type:
+                     encoders: Iterable[type]) -> type:
     """Combine several Encoders to a new one.
 
     Use this e.g. as
@@ -65,8 +65,8 @@ class ComplexEncoder(json.JSONEncoder):
 
 # this is adapted from the example in the official python documentation,
 # but has a more stringent test criterium
-def complex_decode(dictionary: dict) -> typing.Union[complex, dict]:
-    """Restore a `scipy.optimize.OptimizeResult` from a json dictionary.
+def complex_decode(dictionary: Dict) -> Union[complex, Dict]:
+    """Restore a `complex` object from a json dictionary.
 
     Use this as the optional `object_hook` argument to `json.load` or
     `json.loads` to restore a `complex` object."""
@@ -107,7 +107,7 @@ class NumpyEncoder(json.JSONEncoder):
         return super().default(obj)
 
 
-def optimize_result_decode(dictionary: dict) -> typing.Any:
+def optimize_result_decode(dictionary: Dict) -> Any:
     """Restore a `scipy.optimize.OptimizeResult` from a json dictionary.
 
     Use this as the optional `object_hook` argument to `json.load` or
@@ -116,6 +116,6 @@ def optimize_result_decode(dictionary: dict) -> typing.Any:
     for key, value in content.items():
         if isinstance(value, list):
             content[key] = np.array(value)
-        if key == "x" and isinstance(value, float):
+        if key == 'x' and isinstance(value, float):
             content[key] = np.array(value)
     return OptimizeResult(content)

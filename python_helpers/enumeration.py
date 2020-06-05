@@ -15,7 +15,7 @@ class StringEnum(enum.IntEnum):
     @classmethod
     def allowed_values(cls) -> str:
         """Return the allowed str values."""
-        return ", ".join(x.name for x in cls)
+        return ', '.join(x.name for x in cls)
 
     @classmethod
     def from_str(cls, string: str) -> StringEnum:
@@ -23,8 +23,8 @@ class StringEnum(enum.IntEnum):
         for value in cls:
             if string == value.name:
                 return value
-        raise ValueError(f"Unknown value. Needs to be one of"
-                         f" {cls.allowed_values()}.")
+        raise ValueError(f'Unknown value. Needs to be one of'
+                         f' {cls.allowed_values()}.')
 
     def __str__(self):
         return self.name
