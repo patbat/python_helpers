@@ -34,6 +34,13 @@ def test_file_handling(tmp_path):
     assert instance == instance2
 
 
+def test_complex_encoding():
+    com = complex(1.1, -2.2)
+    json_string = json.dumps(com, cls=json_coders.ComplexEncoder)
+    com2 = json.loads(json_string, object_hook=json_coders.complex_decode)
+    assert com == com2
+
+
 @dataclass
 class Data:
     number: float

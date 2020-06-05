@@ -51,6 +51,30 @@ def combine_encoders(name: str,
     return type(name, tuple(encoders), {})
 
 
+# this is very similar to the example in the official python documentation
+class ComplexEncoder(json.JSONEncoder):
+    """Encode complex numbers.
+
+    Use this as the optional `cls` argument to `json.dump` or `json.dumps` to
+    encode complex numbers."""
+    def default(self, obj):
+        if isinstance(obj, complex):
+            return {'complex': True, 'real': obj.real, 'imag': obj.imag}
+        return super().default(obj)
+
+
+# this is adapted from the example in the official python documentation,
+# but has a more stringent test criterium
+def complex_decode(dictionary: dict) -> typing.Union[complex, dict]:
+    """Restore a `scipy.optimize.OptimizeResult` from a json dictionary.
+
+    Use this as the optional `object_hook` argument to `json.load` or
+    `json.loads` to restore a `complex` object."""
+    if tuple(dictionary.keys()) == ('complex', 'real', 'imag'):
+        return complex(dictionary['real'], dictionary['imag'])
+    return dictionary
+
+
 class DataclassEncoder(json.JSONEncoder):
     """Encode a dataclass object.
 
