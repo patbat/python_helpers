@@ -14,7 +14,7 @@ setup(
         'Source Code': 'https://github.com/patbat/python_helpers',
     },
     package_data={'python_helpers': ['py.typed']},
-    zip_safe = False,
+    zip_safe=False,
     classifiers=[
         'License :: MIT License'
     ]
