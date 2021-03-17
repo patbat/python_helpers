@@ -20,7 +20,8 @@ from scipy.optimize import OptimizeResult
 
 class JsonSerializable(abc.ABC):
     """Objects that can be read from/stored into json strings and files."""
-    @abc.abstractclassmethod
+    @classmethod
+    @abc.abstractmethod
     def from_json(cls, json_string: str) -> JsonSerializable:
         """Generate an object from a json string."""
 
