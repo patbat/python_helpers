@@ -15,7 +15,7 @@ import dataclasses
 from typing import Any, Dict, Iterable, Union
 
 import numpy as np
-from scipy.optimize import OptimizeResult
+from scipy.optimize import Bounds, OptimizeResult
 
 
 class JsonSerializable(abc.ABC):
@@ -65,7 +65,7 @@ class ComplexEncoder(json.JSONEncoder):
 
 
 # this is adapted from the example in the official python documentation,
-# but has a more stringent test criterium
+# but has a more stringent test criterion
 def complex_decode(dictionary: Dict) -> Union[complex, Dict]:
     """Restore a `complex` object from a json dictionary.
 
@@ -120,3 +120,28 @@ def optimize_result_decode(dictionary: Dict) -> Any:
         if key == 'x' and isinstance(value, float):
             content[key] = np.array(value)
     return OptimizeResult(content)
+
+
+class BoundsEncoder(json.JSONEncoder):
+    """Encode `Bounds`.
+
+    Use this as the optional `cls` argument to `json.dump` or `json.dumps` to
+    encode `Bounds`.
+    """
+    def default(self, obj):
+        if isinstance(obj, Bounds):
+            res = {'Bounds': True}
+            res.update(vars(obj))
+            return res
+        return super().default(obj)
+
+
+def bounds_decode(dictionary: Dict) -> Union[Bounds, Dict]:
+    """Restore a `Bounds` object from a json dictionary.
+
+    Use this as the optional `object_hook` argument to `json.load` or
+    `json.loads` to restore a `Bounds` object."""
+    if tuple(dictionary.keys()) == ('Bounds', 'lb', 'ub', 'keep_feasible'):
+        return Bounds(dictionary['lb'], dictionary['ub'],
+                      dictionary['keep_feasible'])
+    return dictionary

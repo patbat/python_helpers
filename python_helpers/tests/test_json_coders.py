@@ -5,7 +5,7 @@ from typing import List
 
 import numpy as np
 import pytest
-from scipy.optimize import root
+from scipy.optimize import Bounds, root
 
 from python_helpers import json_coders
 
@@ -71,6 +71,15 @@ def test_optimize_result_encoding():
     res2 = json.loads(json_string,
                       object_hook=json_coders.optimize_result_decode)
     assert res == res2
+
+
+def test_bounds_encoding():
+    bounds = Bounds([1, 2], [10, 20])
+    json_string = json.dumps(bounds, cls=json_coders.BoundsEncoder)
+    bounds2 = json.loads(json_string,
+                         object_hook=json_coders.bounds_decode)
+    assert isinstance(bounds2, Bounds)
+    assert vars(bounds) == vars(bounds2)
 
 
 class NumpyData(json_coders.JsonSerializable):
