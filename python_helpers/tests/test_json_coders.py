@@ -67,9 +67,11 @@ def test_numpy_array_encoding():
 
 def test_optimize_result_encoding():
     result = root(lambda x: x**2, 0.5)
-    json_string = json.dumps(result, cls=json_coders.NumpyEncoder)
+    encoders = [json_coders.OptimizeEncoder, json_coders.NumpyEncoder]
+    Encoder = json_coders.combine_encoders('Encoder', encoders)
+    json_string = json.dumps(result, cls=Encoder)
     res2 = json.loads(json_string,
-                      object_hook=json_coders.optimize_result_decode)
+                      object_hook=json_coders.optimize_decode)
     assert result == res2
 
 
