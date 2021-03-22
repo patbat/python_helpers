@@ -12,7 +12,7 @@ from __future__ import annotations
 import abc
 import json
 import dataclasses
-from typing import Any, Dict, Iterable, Union
+from typing import Any, Callable, Dict, Iterable, Union
 
 import numpy as np
 from scipy.optimize import Bounds, OptimizeResult
@@ -20,6 +20,7 @@ from scipy.optimize import Bounds, OptimizeResult
 
 class JsonSerializable(abc.ABC):
     """Objects that can be read from/stored into json strings and files."""
+
     @classmethod
     @abc.abstractmethod
     def from_json(cls, json_string: str) -> JsonSerializable:
@@ -52,12 +53,34 @@ def combine_encoders(name: str,
     return type(name, tuple(encoders), {})
 
 
+def combine_decoders(decoders: Iterable[Callable[[Dict], Any]]
+                     ) -> Callable[[Dict], Any]:
+    """Combine several decoders to a new one.
+
+    Use this e.g. as
+    >>> string = "[...]"  # a string containing json content
+    >>> decoder = combine_decoders([complex_decode, bounds_decode])
+    >>> json.loads(string, object_hook=decoder)
+    """
+    functions = tuple(decoders)
+
+    def dec(dictionary):
+        for func in functions:
+            res = func(dictionary)
+            if type(res) != dict:
+                return res
+        return dictionary
+
+    return dec
+
+
 # this is very similar to the example in the official python documentation
 class ComplexEncoder(json.JSONEncoder):
     """Encode complex numbers.
 
     Use this as the optional `cls` argument to `json.dump` or `json.dumps` to
     encode complex numbers."""
+
     def default(self, obj):
         if isinstance(obj, complex):
             return {'complex': True, 'real': obj.real, 'imag': obj.imag}
@@ -86,6 +109,7 @@ class DataclassEncoder(json.JSONEncoder):
     to `json.load` or `json.loads` back into the
     __init__ of the desired dataclass via `**`.
     """
+
     def default(self, obj):
         if dataclasses.is_dataclass(obj) and not isinstance(obj, type):
             return dataclasses.asdict(obj)
@@ -98,6 +122,7 @@ class NumpyEncoder(json.JSONEncoder):
     Use this as the optional `cls` argument to `json.dump` or `json.dumps` to
     encode numpy types.
     """
+
     def default(self, obj):
         if isinstance(obj, np.integer):
             return int(obj)
@@ -128,6 +153,7 @@ class BoundsEncoder(json.JSONEncoder):
     Use this as the optional `cls` argument to `json.dump` or `json.dumps` to
     encode `Bounds`.
     """
+
     def default(self, obj):
         if isinstance(obj, Bounds):
             res = {'Bounds': True}

@@ -66,15 +66,19 @@ def test_numpy_array_encoding():
 
 
 def test_optimize_result_encoding():
-    res = root(lambda x: x**2, 0.5)
-    json_string = json.dumps(res, cls=json_coders.NumpyEncoder)
+    result = root(lambda x: x**2, 0.5)
+    json_string = json.dumps(result, cls=json_coders.NumpyEncoder)
     res2 = json.loads(json_string,
                       object_hook=json_coders.optimize_result_decode)
-    assert res == res2
+    assert result == res2
 
 
-def test_bounds_encoding():
-    bounds = Bounds([1, 2], [10, 20])
+@pytest.fixture
+def bounds():
+    return Bounds([1, 2], [10, 20])
+
+
+def test_bounds_encoding(bounds):
     json_string = json.dumps(bounds, cls=json_coders.BoundsEncoder)
     bounds2 = json.loads(json_string,
                          object_hook=json_coders.bounds_decode)
@@ -109,3 +113,15 @@ def test_combine_encoders(datacls):
     data = NumpyData(datacls, np.random.random((2, 2)))
     data2 = NumpyData.from_json(data.to_json())
     assert data == data2
+
+
+def test_combine_decoders(bounds):
+    obj = [bounds, 1 + 4j]
+    encoders = [json_coders.BoundsEncoder, json_coders.ComplexEncoder]
+    Encoder = json_coders.combine_encoders('Encoder', encoders)
+    json_string = json.dumps(obj, cls=Encoder)
+    decoder = json_coders.combine_decoders([json_coders.bounds_decode,
+                                            json_coders.complex_decode])
+    obj2 = json.loads(json_string, object_hook=decoder)
+    assert vars(obj[0]) == vars(obj2[0])
+    assert obj[1] == obj2[1]
