@@ -137,7 +137,17 @@ def optimize_result_decode(dictionary: Dict) -> Any:
     """Restore a `scipy.optimize.OptimizeResult` from a json dictionary.
 
     Use this as the optional `object_hook` argument to `json.load` or
-    `json.loads` to restore an `OptimizeResult` object."""
+    `json.loads` to restore an `OptimizeResult` object.
+
+    Warnings
+    --------
+    This assumes that `dictionary` represents only a single `OptimizeResult`
+    and nothing else.
+    """
+    # `OptimizeResult` inherits from `dict`, due to the inner workings of
+    # the `json` module this makes it impossible to encode/decode
+    # `OptimizeResult`s  via a custom class inheriting from
+    # `json.JSONEncoder` like, e.g., complex numbers or `Bounds` instances.
     content = dict(dictionary)
     for key, value in content.items():
         if isinstance(value, list):
