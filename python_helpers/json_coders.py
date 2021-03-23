@@ -13,7 +13,6 @@ import abc
 import json
 import dataclasses
 from typing import Any, Callable, Dict, Iterable, Union
-import warnings
 
 import numpy as np
 from scipy.optimize import Bounds, OptimizeResult
@@ -134,32 +133,11 @@ class NumpyEncoder(json.JSONEncoder):
         return super().default(obj)
 
 
-class OptimizeEncoder(json.JSONEncoder):
-    """Encode `scipy.optimize.OptimizeResult`.
-
-    Use this as the optional `cls` argument to `json.dump` or `json.dumps` to
-    encode `scipy.optimize.OptimizeResult`.
-    """
-    identifier = 'optimize_res_4515768125215585352214577371417303827434'
-
-    def default(self, obj):
-        if isinstance(obj, OptimizeResult):
-            obj = {type(self).identifier: obj}
-        return super().default(obj)
-
-
-def optimize_decode(dictionary: Dict) -> Any:
+def optimize_result_decode(dictionary: Dict) -> Any:
     """Restore a `scipy.optimize.OptimizeResult` from a json dictionary.
 
     Use this as the optional `object_hook` argument to `json.load` or
     `json.loads` to restore an `OptimizeResult` object."""
-    if (len(dictionary) == 1
-            and next(iter(dictionary.keys())) == OptimizeEncoder.identifier):
-        return _optimize_helper(next(iter(dictionary.values())))
-    return dictionary
-
-
-def _optimize_helper(dictionary: Dict) -> Any:
     content = dict(dictionary)
     for key, value in content.items():
         if isinstance(value, list):
@@ -167,18 +145,6 @@ def _optimize_helper(dictionary: Dict) -> Any:
         if key == 'x' and isinstance(value, float):
             content[key] = np.array(value)
     return OptimizeResult(content)
-
-
-def optimize_result_decode(dictionary: Dict) -> Any:
-    """DEPRECATED: use `optimize_decode` instead.
-
-    Restore a `scipy.optimize.OptimizeResult` from a json dictionary.
-
-    Use this as the optional `object_hook` argument to `json.load` or
-    `json.loads` to restore an `OptimizeResult` object."""
-    warnings.warn("deprecated: use `optimize_decode` instead",
-                  DeprecationWarning)
-    return _optimize_helper(dictionary)
 
 
 class BoundsEncoder(json.JSONEncoder):
