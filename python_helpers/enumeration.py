@@ -5,20 +5,27 @@ An enumeration that goes hand in hand with strings
 """
 from __future__ import annotations
 import enum
+from typing import Type, TypeVar
+
+
+# Needs to be defined outside of `StringEnum`'s body, for otherwise it
+# acts like a member of an enum, thereby breaking the code.
+T = TypeVar('T', bound='StringEnum')
 
 
 class StringEnum(enum.IntEnum):
     """An enumeration that goes hand in hand with strings.
 
     It allows for construction from strings and comparison with strings.
-    For an example, see `python_helpers.tests.test_enumeration`."""
+    For an example, see `python_helpers.tests.test_enumeration`.
+    """
     @classmethod
     def allowed_values(cls) -> str:
         """Return the allowed str values."""
         return ', '.join(x.name for x in cls)
 
     @classmethod
-    def from_str(cls, string: str) -> StringEnum:
+    def from_str(cls: Type[T], string: str) -> T:
         """Generate an instance corresponding to `string`."""
         for value in cls:
             if string == value.name:

@@ -13,7 +13,7 @@ import abc
 from collections.abc import Callable, Iterable
 import json
 import dataclasses
-from typing import Any, Union
+from typing import Any, Union, Type, TypeVar
 
 import numpy as np
 from scipy.optimize import Bounds, OptimizeResult  # type: ignore
@@ -21,10 +21,11 @@ from scipy.optimize import Bounds, OptimizeResult  # type: ignore
 
 class JsonSerializable(abc.ABC):
     """Objects that can be read from/stored into json strings and files."""
+    T = TypeVar('T', bound='JsonSerializable')
 
     @classmethod
     @abc.abstractmethod
-    def from_json(cls, json_string: str) -> JsonSerializable:
+    def from_json(cls: Type[T], json_string: str) -> T:
         """Generate an object from a json string."""
 
     @abc.abstractmethod
@@ -32,7 +33,7 @@ class JsonSerializable(abc.ABC):
         """Convert an object into a json string."""
 
     @classmethod
-    def load(cls, file_path: str) -> JsonSerializable:
+    def load(cls: Type[T], file_path: str) -> T:
         """Load an object from a json file."""
         with open(file_path, 'r') as input_file:
             return cls.from_json(input_file.read())
