@@ -1,7 +1,6 @@
 # python_helpers
 
-[![Build Status](https://travis-ci.org/patbat/python_helpers.svg?branch=master)](https://travis-ci.org/patbat/python_helpers)
-[![Coverage Status](https://coveralls.io/repos/github/patbat/python_helpers/badge.svg?branch=master)](https://coveralls.io/github/patbat/python_helpers?branch=master)
+![example workflow](https://github.com/patbat/python_helpers/actions/workflows/python_tests.yml/badge.svg)
 
 Some short helpers to simplify common tasks.
 
