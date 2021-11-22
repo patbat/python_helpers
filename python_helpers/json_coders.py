@@ -15,7 +15,7 @@ import dataclasses
 from typing import Any, Callable, Dict, Iterable, Union
 
 import numpy as np
-from scipy.optimize import Bounds, OptimizeResult
+from scipy.optimize import Bounds, OptimizeResult  # type: ignore
 
 
 class JsonSerializable(abc.ABC):

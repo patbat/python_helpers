@@ -5,7 +5,7 @@ from typing import List
 
 import numpy as np
 import pytest
-from scipy.optimize import Bounds, root
+from scipy.optimize import Bounds, root  # type: ignore
 
 from python_helpers import json_coders
 
