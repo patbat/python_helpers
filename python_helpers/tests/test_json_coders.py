@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 import json
 import os
-from typing import List
 
 import numpy as np
 import pytest
@@ -44,7 +43,7 @@ def test_complex_encoding():
 @dataclass
 class Data:
     number: float
-    values: List[int]
+    values: list[int]
 
 
 @pytest.fixture

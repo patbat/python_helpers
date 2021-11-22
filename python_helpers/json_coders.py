@@ -10,9 +10,10 @@ greater ease.
 """
 from __future__ import annotations
 import abc
+from collections.abc import Callable, Iterable
 import json
 import dataclasses
-from typing import Any, Callable, Dict, Iterable, Union
+from typing import Any, Union
 
 import numpy as np
 from scipy.optimize import Bounds, OptimizeResult  # type: ignore
@@ -53,8 +54,8 @@ def combine_encoders(name: str,
     return type(name, tuple(encoders), {})
 
 
-def combine_decoders(decoders: Iterable[Callable[[Dict], Any]]
-                     ) -> Callable[[Dict], Any]:
+def combine_decoders(decoders: Iterable[Callable[[dict], Any]]
+                     ) -> Callable[[dict], Any]:
     """Combine several decoders to a new one.
 
     Use this e.g. as
@@ -89,7 +90,7 @@ class ComplexEncoder(json.JSONEncoder):
 
 # this is adapted from the example in the official python documentation,
 # but has a more stringent test criterion
-def complex_decode(dictionary: Dict) -> Union[complex, Dict]:
+def complex_decode(dictionary: dict) -> Union[complex, dict]:
     """Restore a `complex` object from a json dictionary.
 
     Use this as the optional `object_hook` argument to `json.load` or
@@ -133,7 +134,7 @@ class NumpyEncoder(json.JSONEncoder):
         return super().default(obj)
 
 
-def optimize_result_decode(dictionary: Dict) -> Any:
+def optimize_result_decode(dictionary: dict) -> Any:
     """Restore a `scipy.optimize.OptimizeResult` from a json dictionary.
 
     Use this as the optional `object_hook` argument to `json.load` or
@@ -172,7 +173,7 @@ class BoundsEncoder(json.JSONEncoder):
         return super().default(obj)
 
 
-def bounds_decode(dictionary: Dict) -> Union[Bounds, Dict]:
+def bounds_decode(dictionary: dict) -> Union[Bounds, dict]:
     """Restore a `Bounds` object from a json dictionary.
 
     Use this as the optional `object_hook` argument to `json.load` or
