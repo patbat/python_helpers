@@ -1,6 +1,6 @@
 # python_helpers
 
-![example workflow](https://github.com/patbat/python_helpers/actions/workflows/python_tests.yml/badge.svg)
+![python workflow](https://github.com/patbat/python_helpers/actions/workflows/python_tests.yml/badge.svg)
 
 Some short helpers to simplify common tasks.
 
