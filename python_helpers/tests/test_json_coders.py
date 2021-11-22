@@ -74,11 +74,13 @@ def test_optimize_result_encoding():
 
 @pytest.fixture
 def bounds():
-    return Bounds([1, 2], [10, 20])
+    return Bounds(1, 10)
 
 
 def test_bounds_encoding(bounds):
-    json_string = json.dumps(bounds, cls=json_coders.BoundsEncoder)
+    encoders = [json_coders.BoundsEncoder, json_coders.NumpyEncoder]
+    Encoder = json_coders.combine_encoders('Encoder', encoders)
+    json_string = json.dumps(bounds, cls=Encoder)
     bounds2 = json.loads(json_string,
                          object_hook=json_coders.bounds_decode)
     assert isinstance(bounds2, Bounds)
@@ -116,7 +118,9 @@ def test_combine_encoders(datacls):
 
 def test_combine_decoders(bounds):
     obj = [bounds, 1 + 4j]
-    encoders = [json_coders.BoundsEncoder, json_coders.ComplexEncoder]
+    encoders = [json_coders.BoundsEncoder,
+                json_coders.ComplexEncoder,
+                json_coders.NumpyEncoder]
     Encoder = json_coders.combine_encoders('Encoder', encoders)
     json_string = json.dumps(obj, cls=Encoder)
     decoder = json_coders.combine_decoders([json_coders.bounds_decode,
